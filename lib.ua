@@ -11,17 +11,6 @@ HeaderBin ← B~M‼B~Z!Header (
   B~F‼B~Ube₈ Header~Colorspace
 )
 
-TagRgbId ↚ °⋯⇌[1 1 1 1 1 1 1 0]
-TagRgbaId ↚ °⋯⇌[1 1 1 1 1 1 1 1]
-
-TagDiff ↚  fork(drop1 | [fork(mod4floordiv16|mod4floordiv4|mod4)] first)
-
-TagLuma ↚ ⊙⊂ ⊃(
-  ↘2
-| mod64 ⊡0
-| [fork(floordiv16|mod16)] ⊡1
-)
-
 Wra ↚ ◿256
 
 # (r * 3 + g * 5 + b * 7 + a * 11) % 64
@@ -33,6 +22,17 @@ IndexHash ↚ ◿64 /+ *[3 5 7 11]
   StreamDone ← (0)
 }
 
+TagRgbId ↚ °⋯⇌[1 1 1 1 1 1 1 0]
+TagRgbaId ↚ °⋯⇌[1 1 1 1 1 1 1 1]
+
+TagDiff ↚  fork(drop1 | [fork(mod4floordiv16|mod4floordiv4|mod4)] first)
+
+TagLuma ↚ [ dipdipdip0 dip(dip(+-8).) + bydip(-8) ⊃(
+  floordiv16 pick1
+| -32 mod64 ⊡0
+| mod16 pick1
+)]
+
 # 8 bit tags have precedence over 2 bit tags
 # end is marked with 7 0x00 and 1 0x01
 
@@ -42,7 +42,7 @@ StepInner ↚ (
   sw(
     ⊃(↘1|fix ⊡: ◡⋅Decoder~Index mod64 ⊢)
   | ⊙(fix Wra+ ◡⋅Decoder~Prev⬚0↙4 -2) TagDiff
-  | ⊙(fix Wra+ ◡⋅Decoder~Prev⬚0↙4 /⊂₃ ⟜(+ -8) -32 ⊃⊢↘₁) TagLuma
+  | fork(drop2| fix Wra+ ◡⋅Decoder~Prev TagLuma)
   | ⍣(fork(drop4| fix ⊂: ⊡3◡⋅Decoder~Prev take3drop1) unTagRgbId
     | fork(drop5| fix take4drop1) unTagRgbaId
     | fork(drop1| ↯: ◡⋅Decoder~Prev +1 mod64 ⊢) pop
@@ -108,7 +108,7 @@ DecodeStreamContinue = (
 DecodeStreamStart = (
   : popHeaderBin by&rb14
   # Stream Header
-  [] [] Decoder 256
+  [] [] Decoder 512
 )
 
 # Image ? Buf Pixels Decoder NumReadBytes Stream Header

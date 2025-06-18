@@ -3,13 +3,10 @@ Qoi ~ "lib.ua"
 # because caches
 ◌ ⍜&fo Qoi~DecodeStreamAll "dice.qoi"
 
-$all ⍜now(
-  Qoi~DecodeAll &frab"dice.qoi"
-)
-
-$stream ⍜now(
+$uiuaqoi ⍜now(
   ⍜&fo Qoi~DecodeStreamAll "dice.qoi"
 )
 
-⊙:
-◡⋅⋅(⍤"" ≍)
+$unimg ⍜now(
+  ◌ °img &frab "dice.qoi"
+)
