@@ -40,27 +40,26 @@ TagLuma ↚ ⊙⊂ ⊃(
 
 TagRle ↚ : +1 °⋯⇌ °□⊡1 ⊸(°3 °⋯⇌°□⊢) B~SelectByteBits![2 6] ⊃(⊢|↘1)
 
-~~ Decoder {
-  Prev ← [0 0 0 255]
-  Index ← ↯[64 4]0
-}
-
-Sat ↚ ⨬∘⋅255 >255.
 Wra ↚ ◿256
 
 # (r * 3 + g * 5 + b * 7 + a * 11) % 64
 IndexHash ↚ ◿64 /(Wra+) Wra×[3 5 7 11]
+
+~~ Decoder {
+  Prev ← [0 0 0 255]
+  Index ← under(pickIndexHash [0 0 0 255])([0 0 0 255]pop) ↯[64 4]0
+}
 
 # 8 bit tags have precedence over 2 bit tags
 # end is marked with 7 0x00 and 1 0x01
 
 # RemainingBytes Pixels Decoder ? Bytes Decoder
 StepInner ↚ (
-  ⍣(⊙(⊂: ⊡3◡⋅Decoder~Prev) TagRgb
-  | TagRgba
-  | ⊙(⊡: ◡⋅Decoder~Index) TagIdx
-  | ⊙(Wra+ ◡⋅Decoder~Prev⬚0↙4 -2) TagDiff
-  | ⊙(Wra+ ◡⋅Decoder~Prev⬚0↙4 /⊂₃ ⟜(+ -8) -32 ⊃⊢↘₁) TagLuma
+  ⍣(⊙([dip] ⊂: ⊡3◡⋅Decoder~Prev) TagRgb
+  | dip[dip] TagRgba
+  | ⊙([dip] ⊡: ◡⋅Decoder~Index) TagIdx
+  | ⊙([dip] Wra+ ◡⋅Decoder~Prev⬚0↙4 -2) TagDiff
+  | ⊙([dip] Wra+ ◡⋅Decoder~Prev⬚0↙4 /⊂₃ ⟜(+ -8) -32 ⊃⊢↘₁) TagLuma
   | ⊙(↯: ◡⋅Decoder~Prev) TagRle
   )
 
