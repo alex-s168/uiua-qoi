@@ -56,12 +56,15 @@ IndexHash ↚ ◿64 /(Wra+) Wra×[3 5 7 11]
 
 # RemainingBytes Pixels Decoder ? Bytes Decoder
 StepInner ↚ (
-  ⍣(⊙([dip] ⊂: ⊡3◡⋅Decoder~Prev) TagRgb
-  | dip[dip] TagRgba
-  | ⊙([dip] ⊡: ◡⋅Decoder~Index) TagIdx
+  floordiv64 first.
+  sw(
+    ⊙([dip] ⊡: ◡⋅Decoder~Index) TagIdx
   | ⊙([dip] Wra+ ◡⋅Decoder~Prev⬚0↙4 -2) TagDiff
   | ⊙([dip] Wra+ ◡⋅Decoder~Prev⬚0↙4 /⊂₃ ⟜(+ -8) -32 ⊃⊢↘₁) TagLuma
-  | ⊙(↯: ◡⋅Decoder~Prev) TagRle
+  | ⍣(⊙([dip] ⊂: ⊡3◡⋅Decoder~Prev) TagRgb
+    | dip[dip] TagRgba
+    | ⊙(↯: ◡⋅Decoder~Prev) TagRle
+    )
   )
 
   ⊙⟜(

@@ -1,7 +1,7 @@
 Qoi ~ "lib.ua"
 
 # because caches
-◌Qoi~DecodeAll &frab"dice.qoi"
+◌ ⍜&fo Qoi~DecodeStreamAll "dice.qoi"
 
 $all ⍜now(
   Qoi~DecodeAll &frab"dice.qoi"
