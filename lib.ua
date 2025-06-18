@@ -33,9 +33,6 @@ TagLuma ↚ [ dipdipdip0 dip(dip(+-8).) + bydip(-8) ⊃(
 | mod16 pick1
 )]
 
-# 8 bit tags have precedence over 2 bit tags
-# end is marked with 7 0x00 and 1 0x01
-
 # RemainingBytes Pixels Decoder ? Bytes Decoder
 StepInner ↚ (
   floordiv64 first.
@@ -57,17 +54,18 @@ StepInner ↚ (
 )
 
 
-# only consumes max 5 bytes per call.
+# only consumes max 8 bytes per call.
 # useful for streaming
 # 
 # RemainingBytes Pixels Decoder ? Bytes Pixels Decoder
 Step ← (
-  :
-  ⊙(
-    StepInner
-    ÷255 :
-  )
-  :⊂
+  sw(
+    :join ⊙(
+      StepInner
+      ÷255 :
+    ) :
+  | []pop
+  ) match[0 0 0 0 0 0 0 1].
 )
 
 # Bytes Pixels Decoder ? Bytes
@@ -93,7 +91,7 @@ DecodeStreamStep = (
   below gapgapgap&rb
   # AdditionalBuf Buf Pixels Decoder NumReadBytes Stream
   sw(
-    ⍢Step(>=5⧻) joi :
+    ⍢Step(>=8⧻) joi :
   | dipdip(underDecoder~StreamDone(1pop)) pop
   ) =0 len.
 )
