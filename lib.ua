@@ -14,12 +14,12 @@ HeaderBin ← B~M‼B~Z!Header (
 TagRgbId ↚ °⋯⇌[1 1 1 1 1 1 1 0]
 TagRgbaId ↚ °⋯⇌[1 1 1 1 1 1 1 1]
 
-TagDiff ↚ : ≡◇(°⋯⇌) ↘1 ⊸(°1 °⋯⇌°□⊢) B~SelectByteBits![2 2 2 2] ⊃(⊢|↘1)
+TagDiff ↚  fork(drop1 | [fork(mod4floordiv16|mod4floordiv4|mod4)] first)
 
 TagLuma ↚ ⊙⊂ ⊃(
   ↘2
-| °⋯⇌ °□⊡1 ⊸(°2 °⋯⇌°□⊢) B~SelectByteBits![2 6] ⊡0
-| ≡◇(°⋯⇌) B~SelectByteBits![4 4] ⊡1
+| mod64 ⊡0
+| [fork(floordiv16|mod16)] ⊡1
 )
 
 Wra ↚ ◿256
@@ -40,13 +40,13 @@ IndexHash ↚ ◿64 /+ *[3 5 7 11]
 StepInner ↚ (
   floordiv64 first.
   sw(
-    ⊃(↘1|[dip] ⊡: ◡⋅Decoder~Index mod64 ⊢)
-  | ⊙([dip] Wra+ ◡⋅Decoder~Prev⬚0↙4 -2) TagDiff
-  | ⊙([dip] Wra+ ◡⋅Decoder~Prev⬚0↙4 /⊂₃ ⟜(+ -8) -32 ⊃⊢↘₁) TagLuma
-  | ⍣(fork(drop4|unTagRgbId first| [dip] ⊂: ⊡3◡⋅Decoder~Prev take3drop1)
-    | fork(drop5|unTagRgbaId first| [dip] take4drop1)
-    | fork(drop1| ↯: ◡⋅Decoder~Prev +1 mod64 ⊢)
-    )
+    ⊃(↘1|fix ⊡: ◡⋅Decoder~Index mod64 ⊢)
+  | ⊙(fix Wra+ ◡⋅Decoder~Prev⬚0↙4 -2) TagDiff
+  | ⊙(fix Wra+ ◡⋅Decoder~Prev⬚0↙4 /⊂₃ ⟜(+ -8) -32 ⊃⊢↘₁) TagLuma
+  | ⍣(fork(drop4| fix ⊂: ⊡3◡⋅Decoder~Prev take3drop1) unTagRgbId
+    | fork(drop5| fix take4drop1) unTagRgbaId
+    | fork(drop1| ↯: ◡⋅Decoder~Prev +1 mod64 ⊢) pop
+    ) first.
   )
 
   ⊙⟜(
