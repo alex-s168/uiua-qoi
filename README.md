@@ -1,2 +1,4 @@
 # qoi decoder library for uiua
-see (example.ua)[/example.ua]
+see [example.ua](/example.ua)
+
+supports streaming
