@@ -48,6 +48,7 @@ IndexHash ↚ ◿64 /(Wra+) Wra×[3 5 7 11]
 ~~ Decoder {
   Prev ← [0 0 0 255]
   Index ← under(pickIndexHash [0 0 0 255])([0 0 0 255]pop) ↯[64 4]0
+  StreamDone ← (0)
 }
 
 # 8 bit tags have precedence over 2 bit tags
@@ -92,3 +93,52 @@ End = ⋅⊙◌
 
 # Image ? Pixels Header
 Resh = ↯⊂:4⊂∞ :⊙Header~Width
+
+# Image ? Bytes
+DecodeAll = (
+  HeaderBin
+  Prep
+  ⍢Step(>0⧻)
+  End
+  Resh
+)
+
+# Buf Pixels Decoder NumReadBytes Stream ? Buf Pixels Decoder NumReadBytes Stream
+DecodeStreamStep = (
+  below gapgapgap&rb
+  # AdditionalBuf Buf Pixels Decoder NumReadBytes Stream
+  sw(
+    ⍢Step(>=5⧻) joi :
+  | dipdip(underDecoder~StreamDone(1pop)) pop
+  ) =0 len.
+)
+
+# bool ? Buf Pixels Decoder NumReadBytes Stream
+DecodeStreamContinue = (
+  gapgap Decoder~StreamDone
+  dippoppop
+)
+
+# Buf Pixels Decoder NumReadBytes Stream Header ? Stream
+DecodeStreamStart = (
+  : popHeaderBin by&rb14
+  # Stream Header
+  [] [] Decoder 256
+)
+
+# Image ? Buf Pixels Decoder NumReadBytes Stream Header
+DecodeStreamEnd = (
+  ⍢Step(>0⧻)
+  un0len
+
+  dipgapgapgapid
+  # Pixels Header
+  Resh
+)
+
+# Image ? Stream
+DecodeStreamAll = (
+  DecodeStreamStart
+  ⍢DecodeStreamStep (not gapgap Decoder~StreamDone)
+  DecodeStreamEnd
+)

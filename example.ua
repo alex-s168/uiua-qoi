@@ -1,8 +1,15 @@
 Qoi ~ "lib.ua"
 
-&frab"dice.qoi"
-Qoi~HeaderBin
+# because caches
+◌Qoi~DecodeAll &frab"dice.qoi"
 
-Qoi~Prep
-⍢Qoi~Step(>0⧻)
-Qoi~Resh Qoi~End
+$all ⍜now(
+  Qoi~DecodeAll &frab"dice.qoi"
+)
+
+$stream ⍜now(
+  ⍜&fo Qoi~DecodeStreamAll "dice.qoi"
+)
+
+⊙:
+⊙⊙(⍤"" ≍)
