@@ -5,10 +5,10 @@ B ~ "git: github.com/alex-s168/uiua-bin"
 
 HeaderBin ← B~M‼B~Z!Header (
   B~Magic![113 111 105 102]
-  B~F‼B~Ule₃₂ Header~Width
-  B~F‼B~Ule₃₂ Header~Height
-  B~F‼B~Ube₈ Header~Channels
-  B~F‼B~Ube₈ Header~Colorspace
+  B~F‼B~Ube₃₂ Header~Width
+  B~F‼B~Ube₃₂ Header~Height
+  B~F‼B~U,8 Header~Channels
+  B~F‼B~U,8 Header~Colorspace
 )
 
 Wra ↚ ◿256
