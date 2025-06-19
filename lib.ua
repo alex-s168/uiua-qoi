@@ -75,7 +75,9 @@ End ← ⋅⊙◌
 # Image ? Pixels Header
 Resh ← ↯⊂:4⊂∞ :⊙Header~Width
 
-# use DecodeStreamAll whenever possible instead, because of much better performance
+# TODO: chunk into streams and use decode stream
+
+# use DecodeStreamAll whenever possible instead, because of better performance
 #
 # Image ? Bytes
 DecodeAll ← (
@@ -143,7 +145,7 @@ EncodeRle ↚ (
       -1
       +192 # 0b11xxxxxx
     )
-    ⊂:
+    ⊂
     # Bytes Encoder
   )(
     ≠0 ⋅Encoder~Rle
@@ -165,6 +167,7 @@ EncodePixel ← (
     ⨬(◌
       # Pixel Encoder Bytes
 
+      # TODO: call Wrap
       below(+2 tak3-:dipEncoder~Prev)
       # DiffRGB Pixel Encoder Bytes
 
@@ -230,20 +233,31 @@ EncodeAllToBytes,256 ← (
   Header :°[⊙⊙4]△ ⊙(4 0) .
   °HeaderBin[]
   ⊙(
-    ↯[∞ 4]
-
-    ⊙(Encoder [])
-    ∧(
-      # Pixel Encoder Bytes
-       :EncodePixel
-      # Encoder NewBytes Bytes
-      dipbackjoin
+    rowpool(|1.1
+      ↯[∞ 4]
+      ⊙(unbyEncoder~Prev [6969 6969 6969 6969] unbyEncoder~IndexValid res[64]0 Encoder [])
+      ∧(
+        # Pixel Encoder Bytes
+        :EncodePixel
+        # Encoder NewBytes Bytes
+        dipbackjoin
+      )
+      :
+      # Bytes Encoder 
+      dippop EncodeRle
+      # Bytes
+    )
+    # []Thread->Byte
+    dip[]
+    fold(
+      wait
+      backjoin
     )
 
-    :EncodeFinish
+    join:[0 0 0 0 0 0 0 1]
   )
-  # HeaderBytes Bytes EndBytes
-  joi,3
+  # HeaderBytes Bytes
+  joi
 )
 
 # color channels as floats from 0 to 1
