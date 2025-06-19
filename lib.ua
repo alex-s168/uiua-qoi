@@ -128,6 +128,8 @@ DecodeStreamAll ← (
 ~Encoder {
   Prev ← [0 0 0 255]
   Index ← ⍜(⊡IndexHash [0 0 0 255])([0 0 0 255]◌) ↯[64 4]0
+  # used for multithreaded encode
+  IndexValid = res[64] 1
   Rle ← 0
 }
 
@@ -157,7 +159,7 @@ EncodePixel ← (
   ⨬(⊙(:EncodeRle[])
     # Pixel Encoder Bytes
     ◡(
-      ⊚≡≍¤ dipEncoder~Index
+      ⊚ mul fork(gapEncoder~IndexValid | ≡≍¤ dipEncoder~Index)
     )
     # [Idx]
     ⨬(◌
@@ -186,7 +188,6 @@ EncodePixel ← (
         dip(
           +64/+mul[16 4 1]
           un1<=127.
-          ?,1
           # Byte Encoder Bytes
           dipbackjoin :
         )
@@ -200,8 +201,10 @@ EncodePixel ← (
 
     # update encoder state
     ⟜°⊸Encoder~Prev
+    IndexHash⟜:
+    on⍜(⊡⊙Encoder~Index)◌ 
+    under(pick:Encoder~IndexValid)(1pop):
 
-    (⍜(⊡⊙Encoder~Index)◌ IndexHash⟜:)
     # Encoder Bytes
     :
   | # same as prev
