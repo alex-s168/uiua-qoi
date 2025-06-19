@@ -163,17 +163,33 @@ EncodePixel ← (
     ⨬(◌
       # Pixel Encoder Bytes
 
-      # TODO: diff, luma
+      below(+2 tak3-:dipEncoder~Prev)
+      # DiffRGB Pixel Encoder Bytes
 
-      ◡(=∩⊡₃ ⊙Encoder~Prev)
-      ⨬( # rgba (alpha changed from prev)
-        ⟜:
-        # Pixel Encoder Pixel Bytes
-        ⊙⊙(joi: ⊂255)
-      | # rgb (alpha same as prev)
-        ⟜:
-        # Pixel Encoder Pixel Bytes
-        ⊙⊙(joi:joi 254 ↙3)
+      below(mul /mul mul fork(>=0|<=3) dip(=∩⊡₃ ⊙Encoder~Prev))
+      sw(pop
+        # TODO: luma
+        # rgba
+        ◡(=∩⊡₃ ⊙Encoder~Prev)
+        ⨬( # rgba (alpha changed from prev)
+          ⟜:
+          # Pixel Encoder Pixel Bytes
+          ⊙⊙(joi: ⊂255)
+        | # rgb (alpha same as prev)
+          ⟜:
+          # Pixel Encoder Pixel Bytes
+          ⊙⊙(joi:joi 254 ↙3)
+        )
+      | # luma
+        :
+        # Pixel DiffRGB Encoder Bytes
+        dip(
+          +64/+mul[16 4 1]
+          un1<=127.
+          ?,1
+          # Byte Encoder Bytes
+          dipbackjoin :
+        )
       )
     | # [Idx] Pixel Encoder Bytes
       ⊙:: first
